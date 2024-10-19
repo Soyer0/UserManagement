@@ -1,21 +1,8 @@
 $(document).ready(function () {
-    let selectedUsers = [];
 
     function loadUsers() {
         // Вместо перезагрузки страницы можно динамически обновить список пользователей
         location.reload();
-    }
-
-    function deleteUsers(users) {
-        $.post('ajax/ajax.php', { action: 'delete_users', users: users.map(u => u.id) }, function (response) {
-            const result = JSON.parse(response);
-            if (result.status) {
-                loadUsers();
-            } else {
-                alert(result.error.message);
-            }
-            $('#deleteConfirmModal').modal('hide');
-        });
     }
 
     // Открытие формы для добавления пользователя
@@ -36,7 +23,7 @@ $(document).ready(function () {
                 const user = result.user;
                 $('#firstName').val(user.name_first);
                 $('#lastName').val(user.name_last);
-                $('#status').val(user.status);
+                $('#statusSwitch').prop('checked', user.status === 1).change();
                 $('#role').val(user.role);
                 $('#userId').val(user.id);
                 $('#userModalLabel').text('Edit User');
@@ -53,6 +40,12 @@ $(document).ready(function () {
         e.preventDefault();
         const userId = $('#userId').val();
         const action = userId ? 'update' : 'add';
+
+        const selectedRole = $('#role').val();
+        if (!selectedRole) { // Если роль не выбрана (значение пустое)
+            alert('Please select a role.'); // Показываем предупреждение
+            return; // Останавливаем дальнейшее выполнение
+        }
 
         $.post('ajax/ajax.php', $(this).serialize() + `&action=${action}`, function (response) {
             const result = JSON.parse(response);
@@ -72,7 +65,7 @@ $(document).ready(function () {
 
         $('.userCheckbox:checked').each(function () {
             const userId = $(this).closest('tr').data('id');
-            const userName = $(this).closest('tr').find('.userName').text(); // Извлечение имени пользователя
+            const userName = $(this).closest('tr').find('td:nth-child(2)').text(); // Извлечение имени пользователя из второго столбца
             users.push({ id: userId, name: userName });
         });
 
@@ -95,14 +88,14 @@ $(document).ready(function () {
 
             // Обработчик для подтверждения удаления
             $('#confirmDeleteBtn').off('click').on('click', function () {
-                $.post('ajax/ajax.php', { action: 'delete_users', users: users.map(u => u.id) }, function (response) {
+                $.post('ajax/ajax.php', { action: 'delete', users: users.map(u => u.id) }, function (response) {
                     const result = JSON.parse(response);
                     if (result.status) {
-                        loadUsers(); // Перезагружаем пользователей
+                        loadUsers();
                     } else {
                         alert(result.error.message);
                     }
-                    $('#deleteConfirmModal').modal('hide'); // Закрываем модальное окно после выполнения запроса
+                    $('#deleteConfirmModal').modal('hide');
                 });
             });
         } else {
@@ -120,21 +113,20 @@ $(document).ready(function () {
 // Модальное окно для удаления одного пользователя
     $('.deleteUserBtn').on('click', function () {
         const userId = $(this).data('id');
-        const userName = $(this).closest('tr').find('.userName').text(); // Извлечение имени пользователя
-        selectedUsers = []; // Очистить массив выбранных пользователей
-        selectedUsers.push({ id: userId, name: userName }); // Добавить одного пользователя для удаления
+        const userName = $(this).closest('tr').find('td:nth-child(2)').text(); // Извлечение имени пользователя из второй ячейки
 
         // Заполнение списка имен в модальном окне
-        $('#userListToDelete').empty();
-        $('#userListToDelete').append(`<li>${userName}</li>`);
-
+        $('#userListToDelete').empty().append(`<li>${userName}</li>`);
         $('#deleteConfirmModal').modal('show');
+
+        // Сохраняем userId в переменной, чтобы он был доступен в обработчике подтверждения
+        $('#confirmDeleteBtn').data('userId', userId);
     });
 
-    // Обработчик для подтверждения удаления
+// Обработчик для подтверждения удаления
     $('#confirmDeleteBtn').off('click').on('click', function () {
-        const userId = selectedUsers[0].id; // Получаем id пользователя из массива
-        $.post('ajax/ajax.php', { action: 'delete_user', id: userId }, function (response) {
+        const userId = $(this).data('userId'); // Получаем userId из данных кнопки
+        $.post('ajax/ajax.php', { action: 'delete', users: [userId] }, function (response) { // Изменено с id на users
             const result = JSON.parse(response);
             if (result.status) {
                 loadUsers();

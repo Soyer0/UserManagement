@@ -17,8 +17,12 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/style.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
 <body>
 
@@ -110,21 +114,21 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                         <input type="text" class="form-control" id="lastName" name="lastName" required>
                     </div>
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select class="form-control" id="status" name="status">
-                            <option value="1">Active</option>
-                            <option value="0">Not Active</option>
-                        </select>
+                        <label for="statusSwitch">Status</label><br>
+                        <label class="switch">
+                            <input type="checkbox" id="statusSwitch" name="status" value="active">
+                            <span class="slider round"></span>
+                        </label>
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
                         <select class="form-control" id="role" name="role">
+                            <option value="">-Please select-</option>
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <!-- Кнопка в правом нижнем углу -->
                         <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
                     </div>
                 </form>

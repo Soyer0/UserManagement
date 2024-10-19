@@ -24,20 +24,26 @@ if ($action === 'get_user') {
     }
 }
 
-if ($action === 'delete_user') {
-    $id = isset($_POST['id']) ? $_POST['id'] : null;
+if ($action === 'delete') {
+    $users = isset($_POST['users']) ? $_POST['users'] : [];
 
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-    if ($stmt->execute([$id])) {
+    if (count($users) === 0) {
+        respond(false, ['code' => 400, 'message' => 'No users selected for deletion']);
+    }
+
+    $placeholders = implode(',', array_fill(0, count($users), '?'));
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id IN ($placeholders)");
+
+    if ($stmt->execute($users)) {
         respond(true);
     } else {
-        respond(false, ['code' => 500, 'message' => 'Failed to delete user']);
+        respond(false, ['code' => 500, 'message' => 'Failed to delete user(s)']);
     }
 }
 
 if (in_array($action, ['add', 'update'])) {
-    $firstName = isset($_POST['firstName']) ? $_POST['firstName'] : '';
-    $lastName = isset($_POST['lastName']) ? $_POST['lastName'] : '';
+    $firstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
+    $lastName = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
     $status = isset($_POST['status']) ? $_POST['status'] : '';
     $role = isset($_POST['role']) ? $_POST['role'] : '';
     $userId = isset($_POST['userId']) ? $_POST['userId'] : null;
@@ -67,14 +73,5 @@ if (in_array($action, ['set_active', 'set_not_active'])) {
 
     $stmt = $pdo->prepare("UPDATE users SET status = ? WHERE id IN ($placeholders)");
     $stmt->execute(array_merge([$status], $users));
-    respond(true);
-}
-
-if ($action === 'delete') {
-    $users = isset($_POST['users']) ? $_POST['users'] : [];
-    $placeholders = implode(',', array_fill(0, count($users), '?'));
-
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id IN ($placeholders)");
-    $stmt->execute($users);
     respond(true);
 }
