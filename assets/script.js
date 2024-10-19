@@ -1,53 +1,57 @@
 $(document).ready(function () {
-
     function loadUsers() {
-        // Вместо перезагрузки страницы можно динамически обновить список пользователей
         location.reload();
     }
 
-    // Открытие формы для добавления пользователя
-    $('#addUserBtn').on('click', function () {
+    function openUserModal(mode, user) {
         $('#userForm')[0].reset();
-        $('#userId').val('');
-        $('#userModalLabel').text('Add User');
-        $('#submitBtn').text('Save');
+        $('#userId').val(user ? user.id : '');
+        $('#userModalLabel').text(mode === 'edit' ? 'Edit User' : 'Add User');
+        $('#submitBtn').text(mode === 'edit' ? 'Update' : 'Save');
+
+
+        if (user) {
+            $('#firstName').val(user.name_first);
+            $('#lastName').val(user.name_last);
+            $('#statusSwitch').prop('checked', user.status === 1);
+            $('#role').val(user.role);
+
+            if($('#userModalLabel').text() === 'Edit User') $('#role option[value=""]').hide();
+            else $('#role option[value=""]').show();
+        }
+
         $('#userModal').modal('show');
+    }
+
+    $('#addUserBtn, #addUserBtnBottom').on('click', function () {
+        openUserModal('add');
     });
 
-    // Открытие формы для редактирования пользователя
     $('.editUserBtn').on('click', function () {
         const userId = $(this).data('id');
         $.post('ajax/ajax.php', { action: 'get_user', id: userId }, function (response) {
             const result = JSON.parse(response);
             if (result.status) {
-                const user = result.user;
-                $('#firstName').val(user.name_first);
-                $('#lastName').val(user.name_last);
-                $('#statusSwitch').prop('checked', user.status === 1).change();
-                $('#role').val(user.role);
-                $('#userId').val(user.id);
-                $('#userModalLabel').text('Edit User');
-                $('#submitBtn').text('Update');
-                $('#userModal').modal('show');
+                openUserModal('edit', result.user);
             } else {
                 alert(result.error.message);
             }
         });
     });
 
-    // Отправка формы пользователя
     $('#userForm').on('submit', function (e) {
         e.preventDefault();
         const userId = $('#userId').val();
         const action = userId ? 'update' : 'add';
 
         const selectedRole = $('#role').val();
-        if (!selectedRole) { // Если роль не выбрана (значение пустое)
-            alert('Please select a role.'); // Показываем предупреждение
-            return; // Останавливаем дальнейшее выполнение
+        if (!selectedRole) {
+            alert('Please select a role.');
+            return;
         }
+        const status = $('#statusSwitch').is(':checked') ? 1 : 0;
 
-        $.post('ajax/ajax.php', $(this).serialize() + `&action=${action}`, function (response) {
+        $.post('ajax/ajax.php', $(this).serialize() + `&action=${action}&status=${status}`, function (response) {
             const result = JSON.parse(response);
             if (result.status) {
                 $('#userModal').modal('hide');
@@ -58,89 +62,70 @@ $(document).ready(function () {
         });
     });
 
-    // Применение действий к выбранным пользователям
-    $('#applyActionBtn, #applyActionBtnBottom').on('click', function () {
-        const action = $(this).attr('id') === 'applyActionBtn' ? $('#userActions').val() : $('#userActionsBottom').val();
-        const users = [];
-
-        $('.userCheckbox:checked').each(function () {
-            const userId = $(this).closest('tr').data('id');
-            const userName = $(this).closest('tr').find('td:nth-child(2)').text(); // Извлечение имени пользователя из второго столбца
-            users.push({ id: userId, name: userName });
-        });
-
-        if (users.length === 0) {
-            $('#noUsersSelectedModal').modal('show'); // Модальное окно, если не выбраны пользователи
-            return;
-        }
-
-        if (action === '-Please Select-') {
-            $('#noActionSelectedModal').modal('show'); // Модальное окно, если не выбрано действие
-            return;
-        }
-
-        if (action === 'delete') {
-            $('#userListToDelete').empty(); // Очищаем список перед добавлением
-            users.forEach(function (user) {
-                $('#userListToDelete').append(`<li>${user.name}</li>`); // Добавляем имена пользователей
-            });
-            $('#deleteConfirmModal').modal('show'); // Показать модальное окно
-
-            // Обработчик для подтверждения удаления
-            $('#confirmDeleteBtn').off('click').on('click', function () {
-                $.post('ajax/ajax.php', { action: 'delete', users: users.map(u => u.id) }, function (response) {
-                    const result = JSON.parse(response);
-                    if (result.status) {
-                        loadUsers();
-                    } else {
-                        alert(result.error.message);
-                    }
-                    $('#deleteConfirmModal').modal('hide');
-                });
-            });
-        } else {
-            $.post('ajax/ajax.php', { action: action, users: users.map(u => u.id) }, function (response) {
-                const result = JSON.parse(response);
-                if (result.status) {
-                    loadUsers(); // Перезагружаем пользователей
-                } else {
-                    alert(result.error.message);
-                }
-            });
-        }
-    });
-
-// Модальное окно для удаления одного пользователя
-    $('.deleteUserBtn').on('click', function () {
-        const userId = $(this).data('id');
-        const userName = $(this).closest('tr').find('td:nth-child(2)').text(); // Извлечение имени пользователя из второй ячейки
-
-        // Заполнение списка имен в модальном окне
-        $('#userListToDelete').empty().append(`<li>${userName}</li>`);
-        $('#deleteConfirmModal').modal('show');
-
-        // Сохраняем userId в переменной, чтобы он был доступен в обработчике подтверждения
-        $('#confirmDeleteBtn').data('userId', userId);
-    });
-
-// Обработчик для подтверждения удаления
-    $('#confirmDeleteBtn').off('click').on('click', function () {
-        const userId = $(this).data('userId'); // Получаем userId из данных кнопки
-        $.post('ajax/ajax.php', { action: 'delete', users: [userId] }, function (response) { // Изменено с id на users
+    function applyUserAction(action, users) {
+        $.post('ajax/ajax.php', { action: action, users: users.map(u => u.id) }, function (response) {
             const result = JSON.parse(response);
             if (result.status) {
                 loadUsers();
             } else {
                 alert(result.error.message);
             }
-            $('#deleteConfirmModal').modal('hide'); // Закрываем модальное окно после выполнения запроса
         });
+    }
+
+    $('#applyActionBtn, #applyActionBtnBottom').on('click', function () {
+        const action = $(this).attr('id') === 'applyActionBtn' ? $('#userActions').val() : $('#userActionsBottom').val();
+        const users = [];
+
+        $('.userCheckbox:checked').each(function () {
+            const userId = $(this).closest('tr').data('id');
+            const userName = $(this).closest('tr').find('td:nth-child(2)').text();
+            users.push({ id: userId, name: userName });
+        });
+
+        if (users.length === 0) {
+            $('#noUsersSelectedModal').modal('show');
+            return;
+        }
+
+        if (action === '-Please Select-') {
+            $('#noActionSelectedModal').modal('show');
+            return;
+        }
+
+        if (action === 'delete') {
+            const $userListToDelete = $('#userListToDelete');
+            $userListToDelete.empty();
+            users.forEach(user => $userListToDelete.append(`<li>${user.name}</li>`));
+            $('#deleteConfirmModal').modal('show');
+
+            $('#confirmDeleteBtn').off('click').on('click', function () {
+                applyUserAction('delete', users);
+                $('#deleteConfirmModal').modal('hide');
+            });
+        } else {
+            applyUserAction(action, users);
+        }
     });
 
-    // Логика для работы с checkbox'ами
+    $('.deleteUserBtn').on('click', function () {
+        const userId = $(this).data('id');
+        const userName = $(this).closest('tr').find('td:nth-child(2)').text();
+        const $userListToDelete = $('#userListToDelete');
+        $userListToDelete.empty().append(`<li>${userName}</li>`);
+        $('#deleteConfirmModal').modal('show');
+
+        $('#confirmDeleteBtn').data('userId', userId);
+    });
+
+    $('#confirmDeleteBtn').off('click').on('click', function () {
+        const userId = $(this).data('userId');
+        applyUserAction('delete', [{ id: userId }]);
+        $('#deleteConfirmModal').modal('hide');
+    });
+
     $('#selectAll').on('change', function () {
-        const isChecked = $(this).is(':checked');
-        $('.userCheckbox').prop('checked', isChecked);
+        $('.userCheckbox').prop('checked', $(this).is(':checked'));
     });
 
     $('.userCheckbox').on('change', function () {

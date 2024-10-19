@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../includes/db.php';
 
-$action = isset($_POST['action']) ? $_POST['action'] : null;
+$action = $_POST['action'] ?? null;
 
 function respond($status, $error = null, $user = null)
 {
@@ -11,7 +11,7 @@ function respond($status, $error = null, $user = null)
 }
 
 if ($action === 'get_user') {
-    $id = isset($_POST['id']) ? $_POST['id'] : null;
+    $id = $_POST['id'] ?? null;
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$id]);
@@ -25,7 +25,7 @@ if ($action === 'get_user') {
 }
 
 if ($action === 'delete') {
-    $users = isset($_POST['users']) ? $_POST['users'] : [];
+    $users = $_POST['users'] ?? [];
 
     if (count($users) === 0) {
         respond(false, ['code' => 400, 'message' => 'No users selected for deletion']);
@@ -42,11 +42,11 @@ if ($action === 'delete') {
 }
 
 if (in_array($action, ['add', 'update'])) {
-    $firstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
-    $lastName = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
-    $status = isset($_POST['status']) ? $_POST['status'] : '';
-    $role = isset($_POST['role']) ? $_POST['role'] : '';
-    $userId = isset($_POST['userId']) ? $_POST['userId'] : null;
+    $firstName = trim($_POST['firstName']) ?? '';
+    $lastName = trim($_POST['lastName']) ?? '';
+    $status = $_POST['status'] ?? '';
+    $role = $_POST['role'] ?? '';
+    $userId = $_POST['userId'] ?? null;
 
     if (empty($firstName) || empty($lastName)) {
         respond(false, ['code' => 400, 'message' => 'First name and last name are required']);
@@ -67,7 +67,7 @@ if (in_array($action, ['add', 'update'])) {
 }
 
 if (in_array($action, ['set_active', 'set_not_active'])) {
-    $users = isset($_POST['users']) ? $_POST['users'] : [];
+    $users = $_POST['users'] ?? [];
     $status = $action === 'set_active' ? 1 : 0;
     $placeholders = implode(',', array_fill(0, count($users), '?'));
 

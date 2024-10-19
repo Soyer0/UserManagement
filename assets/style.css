@@ -3,16 +3,16 @@ table {
 }
 
 thead th {
-    background-color: transparent; /* Уберите синий цвет фона */
-    text-align: center; /* Выровняйте текст по центру */
+    background-color: transparent;
+    text-align: center;
 }
 
 tbody td {
-    text-align: center; /* Выровняйте текст в ячейках по центру */
+    text-align: center;
 }
 
 tbody tr:hover {
-    background-color: #f1f1f1; /* Добавьте эффект наведения для строк */
+    background-color: #f1f1f1;
 }
 
 .status-circle {
@@ -25,11 +25,11 @@ tbody tr:hover {
 }
 
 .status-circle.active {
-    background-color: #28a745; /* зелёный для активного статуса */
+    background-color: #28a745;
 }
 
 .status-circle.not-active {
-    background-color: #6c757d; /* серый для неактивного статуса */
+    background-color: #6c757d;
 }
 
 .switch {
@@ -52,7 +52,7 @@ tbody tr:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc; /* Серый цвет по умолчанию */
+    background-color: #ccc;
     transition: .4s;
 }
 
@@ -63,24 +63,22 @@ tbody tr:hover {
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background-color: white; /* Белый цвет ползунка */
+    background-color: white;
     transition: .4s;
 }
 
-/* Зелёный цвет при включении */
 input:checked + .slider {
-    background-color: #4CAF50; /* Зелёный цвет */
+    background-color: #4CAF50;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #4CAF50; /* Зелёный цвет фокуса */
+    box-shadow: 0 0 1px #4CAF50;
 }
 
 input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Закруглённый слайдер */
 .slider.round {
     border-radius: 34px;
 }

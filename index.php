@@ -14,14 +14,16 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management System</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/style.css">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
 <body>
@@ -30,7 +32,8 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     <h2>User Management</h2>
     <div class="mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtn">Add</button>
-        <label for="userActions"></label><select id="userActions" class="ml-2">
+        <label for="userActions"></label>
+        <select id="userActions" class="ml-2">
             <option>-Please Select-</option>
             <option value="set_active">Set Active</option>
             <option value="set_not_active">Set Not Active</option>
@@ -56,9 +59,9 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
         <tbody id="userTableBody">
         <?php foreach ($users as $user): ?>
             <tr data-id="<?= $user['id'] ?>">
-                <td><label>
-                        <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
-                    </label></td>
+                <td>
+                    <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
+                </td>
                 <td><?= htmlspecialchars($user['name_first'] . ' ' . $user['name_last']) ?></td>
                 <td class="status">
                     <span class="status-circle <?= $user['status'] ? 'active' : 'not-active' ?>"></span>
@@ -77,9 +80,8 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 
-
     <div class="mb-3">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtn">Add</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtnBottom">Add</button>
         <label for="userActionsBottom"></label>
         <select id="userActionsBottom" class="ml-2">
             <option>-Please Select-</option>
@@ -122,7 +124,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
-                        <select class="form-control" id="role" name="role">
+                        <select class="form-control" id="role" name="role">Z
                             <option value="">-Please select-</option>
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
@@ -200,6 +202,5 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <script src="assets/script.js"></script>
-
 </body>
 </html>
