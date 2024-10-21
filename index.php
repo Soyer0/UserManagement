@@ -25,6 +25,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
+<!-- User Management Section -->
 <div class="container mt-5">
     <h2>User Management</h2>
     <div class="mb-3">
