@@ -10,7 +10,7 @@ function respond($status, $error = null, $user = null)
     exit;
 }
 
-if ($action === 'get_user') {
+if ($action === 'get') {
     $id = $_POST['id'] ?? null;
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -23,6 +23,18 @@ if ($action === 'get_user') {
         respond(false, ['code' => 100, 'message' => 'User not found']);
     }
 }
+
+if ($action === 'get_all') {
+    try {
+        $stmt = $pdo->query("SELECT * FROM users");
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        respond(true, null, $users);
+    } catch (PDOException $e) {
+        respond(false, ['code' => 500, 'message' => $e->getMessage()]);
+    }
+}
+
 
 if ($action === 'delete') {
     $users = $_POST['users'] ?? [];

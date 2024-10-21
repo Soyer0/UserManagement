@@ -19,12 +19,9 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/style.css">
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
 <body>
 
@@ -57,28 +54,10 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
         </tr>
         </thead>
         <tbody id="userTableBody">
-        <?php foreach ($users as $user): ?>
-            <tr data-id="<?= $user['id'] ?>">
-                <td>
-                    <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
-                </td>
-                <td><?= htmlspecialchars($user['name_first'] . ' ' . $user['name_last']) ?></td>
-                <td class="status">
-                    <span class="status-circle <?= $user['status'] ? 'active' : 'not-active' ?>"></span>
-                </td>
-                <td><?= htmlspecialchars($user['role']) ?></td>
-                <td>
-                    <button class="btn btn-warning btn-sm editUserBtn" data-toggle="modal" data-target="#userModal" data-id="<?= $user['id'] ?>">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm deleteUserBtn" data-id="<?= $user['id'] ?>">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        <?php endforeach; ?>
+<!--        here is the table-->
         </tbody>
     </table>
+
 
     <div class="mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtnBottom">Add</button>
@@ -105,15 +84,17 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                 </button>
             </div>
             <div class="modal-body">
-                <form id="userForm">
+                <form id="userForm" method="POST">
                     <input type="hidden" id="userId" name="userId">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        <input type="text" class="form-control" id="firstName" name="firstName">
+                        <small class="text-danger" id="firstNameError" style="display: none;">This field is required.</small>
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        <input type="text" class="form-control" id="lastName" name="lastName">
+                        <small class="text-danger" id="lastNameError" style="display: none;">This field is required.</small>
                     </div>
                     <div class="form-group">
                         <label for="statusSwitch">Status</label><br>
@@ -124,11 +105,12 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="form-group">
                         <label for="role">Role</label>
-                        <select class="form-control" id="role" name="role">Z
+                        <select class="form-control" id="role" name="role">
                             <option value="">-Please select-</option>
                             <option value="user">User</option>
                             <option value="admin">Admin</option>
                         </select>
+                        <small class="text-danger" id="roleError" style="display: none;">Please choose a role from the list.</small>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
@@ -151,7 +133,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete the following users?</p>
-                <ul id="userListToDelete"></ul> <!-- Список пользователей для удаления -->
+                <ul id="userListToDelete"></ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -161,18 +143,17 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- Modal for No Users Selected Warning -->
-<div class="modal fade" id="noUsersSelectedModal" tabindex="-1" role="dialog" aria-labelledby="noUsersSelectedModalLabel" aria-hidden="true">
+<!-- Unified Modal for Custom Warnings -->
+<div class="modal fade" id="customWarningModal" tabindex="-1" role="dialog" aria-labelledby="customWarningModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="noUsersSelectedModalLabel">Warning</h5>
+                <h5 class="modal-title" id="customWarningModalLabel">Warning</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                No users selected.
+            <div class="modal-body" id="customWarningMessage">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
@@ -181,25 +162,6 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- Modal for No Action Selected Warning -->
-<div class="modal fade" id="noActionSelectedModal" tabindex="-1" role="dialog" aria-labelledby="noActionSelectedModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="noActionSelectedModalLabel">Warning</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                No action selected.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="assets/script.js"></script>
 </body>
