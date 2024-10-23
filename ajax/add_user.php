@@ -4,7 +4,15 @@ require __DIR__ . '/../includes/db.php';
 $firstName = trim($_POST['firstName']) ?? '';
 $lastName = trim($_POST['lastName']) ?? '';
 $status = $_POST['status'] ?? 0;
-$role = $_POST['role'] ?? '';
+$role_id = $_POST['role_id'] ?? 0;
+
+if($role_id === 0) {
+    echo json_encode([
+        'status' => false,
+        'error' => ['code' => 400, 'message' => 'Role ID is required'],
+    ]);
+    exit;
+}
 
 if (empty($firstName) || empty($lastName)) {
     echo json_encode(['status' => false, 'error' => ['code' => 400, 'message' => 'First name and last name are required']]);
@@ -12,8 +20,8 @@ if (empty($firstName) || empty($lastName)) {
 }
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO users (name_first, name_last, status, role) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$firstName, $lastName, $status, $role]);
+    $stmt = $pdo->prepare("INSERT INTO users (name_first, name_last, status, role_id) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$firstName, $lastName, $status, $role_id]);
 
     $newUserId = $pdo->lastInsertId();
 
@@ -22,7 +30,7 @@ try {
         'name_first' => $firstName,
         'name_last' => $lastName,
         'status' => (bool)$status,
-        'role' => $role
+        'role_id' => $role_id
     ];
 
     echo json_encode(['status' => true, 'error' => null, 'user' => $user]);

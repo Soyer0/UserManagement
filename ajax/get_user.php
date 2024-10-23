@@ -17,8 +17,6 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        $user['status'] = (bool)$user['status'];
-
         echo json_encode([
             'status' => true,
             'error' => null,

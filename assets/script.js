@@ -11,16 +11,16 @@ $(document).ready(function () {
             $('#firstName').val(user.name_first);
             $('#lastName').val(user.name_last);
             $('#statusSwitch').prop('checked', user.status === 1);
-            $('#role').val(user.role);
+            $('#role_id').val(user.role_id);
         } else {
             $('#statusSwitch').prop('checked', false);
-            $('#role').val('');
+            $('#role_id').val(0);
         }
 
         if (mode === 'edit') {
-            $('#role option[value=""]').hide();
+            $('#role_id option[value=0]').hide();
         } else {
-            $('#role option[value=""]').show();
+            $('#role_id option[value=0]').show();
         }
         $('#userModal').modal('show');
     }
@@ -55,7 +55,7 @@ $(document).ready(function () {
 
         const firstName = $('#firstName').val().trim();
         const lastName = $('#lastName').val().trim();
-        const selectedRole = $('#role').val();
+        const selectedRole = $('#role_id').val();
 
         let isValid = true; // Flag for form validity
 
@@ -87,10 +87,10 @@ $(document).ready(function () {
 
         const userId = $('#userId').val();
         const action = userId ? 'update' : 'add';
-        const status = $('#statusSwitch').is(':checked') ? 1 : 0;
         const url = userId ? 'ajax/edit_user.php' : 'ajax/add_user.php'; // Dynamic URL
+        const status = $('#statusSwitch').is(':checked') ? 1 : 0;
 
-        $.post(url, $(this).serialize() + `&action=${action}&status=${status}`, function (response) {
+        $.post(url, $(this).serialize() + `&status=${status}`, function (response) {
             const result = JSON.parse(response);
             if (result.status) {
                 $('#userModal').modal('hide');

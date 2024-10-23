@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 require __DIR__ . '/includes/db.php';
 
 $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
+$roles = [1 => 'Admin', 2 => 'User'];
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +65,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                 <td class="status">
                     <span class="status-circle <?= $user['status'] ? 'active' : 'not-active' ?>"></span>
                 </td>
-                <td><?= htmlspecialchars($user['role']) ?></td>
+                <td><?= htmlspecialchars($roles[$user['role_id']]) ?></td>
                 <td>
                     <button class="btn btn-warning btn-sm editUserBtn" data-toggle="modal" data-target="#userModal" data-id="<?= $user['id'] ?>">
                         <i class="bi bi-pencil"></i>
@@ -95,7 +96,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- Modal for Add/Edit User -->
 <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
-    <div class="modal-dialog"role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="userModalLabel">Add</h5>
@@ -119,16 +120,17 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label for="statusSwitch">Status</label><br>
                         <label class="switch">
-                            <input type="checkbox" id="statusSwitch" name="status" value="active">
+                            <input type="checkbox" id="statusSwitch" name="status" value="1">
                             <span class="slider round"></span>
                         </label>
+                        <input type="hidden" id="statusHidden" name="status" value="0">
                     </div>
                     <div class="form-group">
-                        <label for="role">Role</label>
-                        <select class="form-control" id="role" name="role">
-                            <option value="">-Please select-</option>
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
+                        <label for="role_id">Role</label>
+                        <select class="form-control" id="role_id" name="role_id">
+                            <option value=0>-Please select-</option>
+                            <option value=2>User</option>
+                            <option value=1>Admin</option>
                         </select>
                         <small class="text-danger" id="roleError" style="display: none;">Please choose a role from the list.</small>
                     </div>

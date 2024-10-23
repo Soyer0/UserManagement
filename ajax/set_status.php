@@ -24,12 +24,11 @@ try {
         $stmt->execute([$status, $userId]);
 
         if ($stmt->rowCount() > 0) {
-            $stmt = $pdo->prepare("SELECT id, name_first, name_last, status, role FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT id, name_first, name_last, status, role_id FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                $user['status'] = (bool)$user['status'];
                 $updatedUsers[] = $user;
             }
         }
