@@ -1,0 +1,26 @@
+<?php
+require __DIR__ . '/../includes/db.php';
+require __DIR__. '/../includes/userHtmlRow.php';
+
+$firstName = trim($_POST['firstName']) ?? '';
+$lastName = trim($_POST['lastName']) ?? '';
+$status = $_POST['status'] ?? 0;
+$role = $_POST['role'] ?? '';
+
+if (empty($firstName) || empty($lastName)) {
+    echo json_encode(['status' => false, 'error' => ['code' => 400, 'message' => 'First name and last name are required']]);
+    exit;
+}
+
+try {
+    $stmt = $pdo->prepare("INSERT INTO users (name_first, name_last, status, role) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$firstName, $lastName, $status, $role]);
+
+    $newUserId = $pdo->lastInsertId();
+
+    $html = generateUserRowHtml($newUserId, $firstName, $lastName, $status, $role);
+    echo json_encode(['status' => true, 'html' => $html]);
+} catch (PDOException $e) {
+    echo json_encode(['status' => false, 'error' => ['code' => 500, 'message' => $e->getMessage()]]);
+}
+exit;

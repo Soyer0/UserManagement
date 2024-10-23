@@ -55,7 +55,26 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
         </tr>
         </thead>
         <tbody id="userTableBody">
-<!--        here is the table-->
+        <?php foreach ($users as $user): ?>
+            <tr data-id="<?= $user['id'] ?>">
+                <td>
+                    <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
+                </td>
+                <td><?= htmlspecialchars($user['name_first'] . ' ' . $user['name_last']) ?></td>
+                <td class="status">
+                    <span class="status-circle <?= $user['status'] ? 'active' : 'not-active' ?>"></span>
+                </td>
+                <td><?= htmlspecialchars($user['role']) ?></td>
+                <td>
+                    <button class="btn btn-warning btn-sm editUserBtn" data-toggle="modal" data-target="#userModal" data-id="<?= $user['id'] ?>">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm deleteUserBtn" data-id="<?= $user['id'] ?>">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        <?php endforeach; ?>
         </tbody>
     </table>
 
