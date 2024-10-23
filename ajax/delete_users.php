@@ -8,12 +8,23 @@ if (count($users) === 0) {
     exit;
 }
 
-$placeholders = implode(',', array_fill(0, count($users), '?'));
-$stmt = $pdo->prepare("DELETE FROM users WHERE id IN ($placeholders)");
+try {
+    $placeholders = implode(',', array_fill(0, count($users), '?'));
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id IN ($placeholders)");
 
-if ($stmt->execute($users)) {
-    echo json_encode(['status' => true, 'userIds' => $users]);
-} else {
-    echo json_encode(['status' => false, 'error' => ['code' => 500, 'message' => 'Failed to delete user(s)']]);
+    if ($stmt->execute($users)) {
+        echo json_encode([
+            'status' => true,
+            'error' => null,
+            'users' => $users
+        ]);
+    } else {
+        throw new PDOException('Failed to delete user(s)');
+    }
+} catch (PDOException $e) {
+    echo json_encode([
+        'status' => false,
+        'error' => ['code' => 500, 'message' => $e->getMessage()],
+    ]);
 }
 exit;

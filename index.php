@@ -95,7 +95,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- Modal for Add/Edit User -->
 <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog"role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="userModalLabel">Add</h5>
@@ -182,7 +182,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-
+<script src="assets/utils.js" type="module"></script>
 <script src="assets/script.js"></script>
 </body>
 </html>

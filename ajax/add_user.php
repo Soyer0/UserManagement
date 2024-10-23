@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../includes/db.php';
-require __DIR__. '/../includes/userHtmlRow.php';
 
 $firstName = trim($_POST['firstName']) ?? '';
 $lastName = trim($_POST['lastName']) ?? '';
@@ -18,9 +17,16 @@ try {
 
     $newUserId = $pdo->lastInsertId();
 
-    $html = generateUserRowHtml($newUserId, $firstName, $lastName, $status, $role);
-    echo json_encode(['status' => true, 'html' => $html]);
+    $user = [
+        'id' => $newUserId,
+        'name_first' => $firstName,
+        'name_last' => $lastName,
+        'status' => (bool)$status,
+        'role' => $role
+    ];
+
+    echo json_encode(['status' => true, 'error' => null, 'user' => $user]);
 } catch (PDOException $e) {
-    echo json_encode(['status' => false, 'error' => ['code' => 500, 'message' => $e->getMessage()]]);
+    echo json_encode(['status' => false, 'error' => ['code' => 500, 'message' => $e->getMessage()], 'user' => null]);
 }
 exit;

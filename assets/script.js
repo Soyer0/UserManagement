@@ -95,9 +95,9 @@ $(document).ready(function () {
             if (result.status) {
                 $('#userModal').modal('hide');
                 if (action === 'add') {
-                    $('#userTableBody').append(result.html);
+                    $('#userTableBody').append(generateUserRowHtml(result.user));
                 } else {
-                    $(`tr[data-id="${userId}"]`).replaceWith(result.html);
+                    $(`tr[data-id="${userId}"]`).replaceWith(generateUserRowHtml(result.user));
                 }
                 $('#selectAll').prop('checked', false);
             } else {
@@ -123,12 +123,12 @@ $(document).ready(function () {
             const result = JSON.parse(response);
             if (result.status) {
                 if (action === 'delete') {
-                    result.userIds.forEach(function(userId) {
+                    result.users.forEach(function(userId) {
                         $(`tr[data-id="${userId}"]`).remove();
                     });
                 } else if (action === 'set_active' || action === 'set_not_active') {
                     result.users.forEach(function(user) {
-                        $(`tr[data-id="${user.id}"]`).replaceWith(user.html);
+                        $(`tr[data-id="${user.id}"]`).replaceWith(generateUserRowHtml(user));
                     });
                 }
                 $('.userCheckbox, #selectAll').prop('checked', false);
