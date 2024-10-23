@@ -1,3 +1,4 @@
+/* General Table Styling */
 table {
     width: 100%;
 }
@@ -15,6 +16,7 @@ tbody tr:hover {
     background-color: #f1f1f1;
 }
 
+/* Status Indicators */
 .status-circle {
     display: inline-block;
     width: 15px;
@@ -32,6 +34,7 @@ tbody tr:hover {
     background-color: #6c757d;
 }
 
+/* Switch Styling */
 .switch {
     position: relative;
     display: inline-block;
@@ -85,4 +88,10 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+/* Modal Buttons */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
 }

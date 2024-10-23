@@ -29,16 +29,15 @@ $roles = [1 => 'Admin', 2 => 'User'];
 <!-- User Management Section -->
 <div class="container mt-5">
     <h2>User Management</h2>
-    <div class="mb-3">
+    <div class="d-flex mb-3 align-items-center">
         <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtn">Add</button>
-        <label for="userActions"></label>
-        <select id="userActions" class="ml-2">
+        <select id="userActions" class="ml-2 form-control w-auto">
             <option>-Please Select-</option>
             <option value="set_active">Set Active</option>
             <option value="set_not_active">Set Not Active</option>
             <option value="delete">Delete</option>
         </select>
-        <button class="btn btn-success" id="applyActionBtn">OK</button>
+        <button class="btn btn-success ml-2" id="applyActionBtn">OK</button>
     </div>
 
     <table class="table table-bordered">
@@ -79,19 +78,17 @@ $roles = [1 => 'Admin', 2 => 'User'];
         </tbody>
     </table>
 
-
-    <div class="mb-3">
+    <!-- Duplicate Buttons Section -->
+    <div class="d-flex mt-3 align-items-center">
         <button class="btn btn-primary" data-toggle="modal" data-target="#userModal" id="addUserBtnBottom">Add</button>
-        <label for="userActionsBottom"></label>
-        <select id="userActionsBottom" class="ml-2">
+        <select id="userActionsBottom" class="ml-2 form-control w-auto">
             <option>-Please Select-</option>
             <option value="set_active">Set Active</option>
             <option value="set_not_active">Set Not Active</option>
             <option value="delete">Delete</option>
         </select>
-        <button class="btn btn-success" id="applyActionBtnBottom">OK</button>
+        <button class="btn btn-success ml-2" id="applyActionBtnBottom">OK</button>
     </div>
-
 </div>
 
 <!-- Modal for Add/Edit User -->
@@ -107,17 +104,17 @@ $roles = [1 => 'Admin', 2 => 'User'];
             <div class="modal-body">
                 <form id="userForm" method="POST">
                     <input type="hidden" id="userId" name="userId">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="firstName">First Name</label>
                         <input type="text" class="form-control" id="firstName" name="firstName">
                         <small class="text-danger" id="firstNameError" style="display: none;">This field is required.</small>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="lastName">Last Name</label>
                         <input type="text" class="form-control" id="lastName" name="lastName">
                         <small class="text-danger" id="lastNameError" style="display: none;">This field is required.</small>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="statusSwitch">Status</label><br>
                         <label class="switch">
                             <input type="checkbox" id="statusSwitch" name="status" value="1">
@@ -125,16 +122,17 @@ $roles = [1 => 'Admin', 2 => 'User'];
                         </label>
                         <input type="hidden" id="statusHidden" name="status" value="0">
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="role_id">Role</label>
-                        <select class="form-control" id="role_id" name="role_id">
-                            <option value=0>-Please select-</option>
-                            <option value=2>User</option>
-                            <option value=1>Admin</option>
+                        <select class="form-select form-control" id="role_id" name="role_id">
+                            <option value="0">-Please select-</option>
+                            <option value="1">Admin</option>
+                            <option value="2">User</option>
                         </select>
                         <small class="text-danger" id="roleError" style="display: none;">Please choose a role from the list.</small>
                     </div>
-                    <div class="modal-footer">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
                     </div>
                 </form>
