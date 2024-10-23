@@ -1,21 +1,3 @@
-/* General Table Styling */
-table {
-    width: 100%;
-}
-
-thead th {
-    background-color: transparent;
-    text-align: center;
-}
-
-tbody td {
-    text-align: center;
-}
-
-tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
 /* Status Indicators */
 .status-circle {
     display: inline-block;
@@ -34,64 +16,30 @@ tbody tr:hover {
     background-color: #6c757d;
 }
 
-/* Switch Styling */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
+tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+/* Table text alignment */
+tbody td {
+    text-align: center;
 }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
+thead th {
+    text-align: center;
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
+.form-check-input {
+    clear: left;
 }
 
-input:checked + .slider {
-    background-color: #4CAF50;
+.form-switch.form-switch-lg {
+    margin-bottom: 1.5rem; /* JUST FOR STYLING PURPOSE */
 }
 
-input:focus + .slider {
-    box-shadow: 0 0 1px #4CAF50;
+.form-switch.form-switch-lg .form-check-input {
+    height: 2rem;
+    width: calc(3rem + 0.75rem);
+    border-radius: 4rem;
 }
 
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-/* Modal Buttons */
-.modal-footer {
-    display: flex;
-    justify-content: space-between;
-}

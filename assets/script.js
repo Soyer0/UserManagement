@@ -25,6 +25,8 @@ $(document).ready(function () {
         $('#userModal').modal('show');
     }
 
+
+
     // Displays a custom warning modal with the provided message.
     function showCustomWarning(message) {
         document.getElementById('customWarningMessage').innerText = message;
@@ -49,6 +51,11 @@ $(document).ready(function () {
         });
     });
 
+    $('#userModal').on('hidden.bs.modal', function () {
+        // Скрываем все сообщения об ошибках при закрытии модального окна
+        $('#firstNameError, #lastNameError, #roleError').hide();
+    })
+
     // Function for validating the user form
     function validateUserForm() {
         $('#firstNameError, #lastNameError, #roleError').hide();
@@ -69,7 +76,7 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        if (!selectedRole) {
+        if (selectedRole==="0") {
             $('#roleError').show();
             isValid = false;
         }

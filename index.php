@@ -19,6 +19,7 @@ $roles = [1 => 'Admin', 2 => 'User'];
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -64,7 +65,7 @@ $roles = [1 => 'Admin', 2 => 'User'];
                 <td class="status">
                     <span class="status-circle <?= $user['status'] ? 'active' : 'not-active' ?>"></span>
                 </td>
-                <td><?= htmlspecialchars($roles[$user['role_id']]) ?></td>
+                <td><?= $roles[$user['role_id']] ?></td>
                 <td>
                     <button class="btn btn-warning btn-sm editUserBtn" data-toggle="modal" data-target="#userModal" data-id="<?= $user['id'] ?>">
                         <i class="bi bi-pencil"></i>
@@ -104,38 +105,38 @@ $roles = [1 => 'Admin', 2 => 'User'];
             <div class="modal-body">
                 <form id="userForm" method="POST">
                     <input type="hidden" id="userId" name="userId">
-                    <div class="mb-3">
-                        <label for="firstName">First Name</label>
+                    <div class="form-group mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
                         <input type="text" class="form-control" id="firstName" name="firstName">
-                        <small class="text-danger" id="firstNameError" style="display: none;">This field is required.</small>
+                        <small class="form-text text-danger" id="firstNameError" style="display: none;">This field is required.</small>
                     </div>
-                    <div class="mb-3">
-                        <label for="lastName">Last Name</label>
+                    <div class="form-group mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
                         <input type="text" class="form-control" id="lastName" name="lastName">
-                        <small class="text-danger" id="lastNameError" style="display: none;">This field is required.</small>
+                        <small class="form-text text-danger" id="lastNameError" style="display: none;">This field is required.</small>
                     </div>
-                    <div class="mb-3">
-                        <label for="statusSwitch">Status</label><br>
-                        <label class="switch">
-                            <input type="checkbox" id="statusSwitch" name="status" value="1">
-                            <span class="slider round"></span>
-                        </label>
+                    <div class="form-group mb-3">
+                        <label for="statusSwitch" class="form-label">Status</label>
+                        <div class="form-check form-switch form-switch-lg">
+                            <input class="form-check-input" type="checkbox" id="statusSwitch" name="status" value="1">
+                            <label class="form-check-label" for="statusSwitch"></label>
+                        </div>
                         <input type="hidden" id="statusHidden" name="status" value="0">
                     </div>
-                    <div class="mb-3">
-                        <label for="role_id">Role</label>
-                        <select class="form-select form-control" id="role_id" name="role_id">
+                    <div class="form-group mb-3">
+                        <label for="role_id" class="form-label">Role</label>
+                        <select class="form-select" id="role_id" name="role_id">
                             <option value="0">-Please select-</option>
                             <option value="1">Admin</option>
                             <option value="2">User</option>
                         </select>
-                        <small class="text-danger" id="roleError" style="display: none;">Please choose a role from the list.</small>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
+                        <small class="form-text text-danger" id="roleError" style="display: none;">Please choose a role from the list.</small>
                     </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn" form="userForm">Save</button>
             </div>
         </div>
     </div>
