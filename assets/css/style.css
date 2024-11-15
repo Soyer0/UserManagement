@@ -1,0 +1,48 @@
+/* Status Indicators */
+.status-circle {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.status-circle.active {
+    background-color: #28a745;
+}
+
+.status-circle.not-active {
+    background-color: #6c757d;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Table text alignment */
+tbody td {
+    text-align: center;
+}
+
+thead th {
+    text-align: center;
+}
+
+.form-check-input {
+    clear: left;
+}
+
+.form-switch.form-switch-lg {
+    margin-bottom: 1.5rem; /* JUST FOR STYLING PURPOSE */
+}
+
+.form-switch.form-switch-lg .form-check-input {
+    height: 2rem;
+    width: calc(3rem + 0.75rem);
+    border-radius: 4rem;
+}
+
+.error-message {
+    display: none;
+}
