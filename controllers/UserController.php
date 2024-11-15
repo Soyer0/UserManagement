@@ -32,12 +32,12 @@ class UserController {
         if ($isMultiple) {
             $users = array_map(function ($user) {
                 $user['role_name'] = $this->roles[$user['role_id']] ?? 'Unknown';
-                $user['status'] = $this->status[$user['status']] ?? 0;
+                $user['status_name'] = $this->status[$user['status']] ?? 'Unknown';
                 return $user;
             }, $data);
         } else {
             $data['role_name'] = $this->roles[$data['role_id']] ?? 'Unknown';
-            $data['status'] = $this->status[$data['status']] ?? 0;
+            $data['status_name'] = $this->status[$data['status']] ?? 'Unknown';
             $users = $data;
         }
         return [
@@ -45,11 +45,7 @@ class UserController {
             ($isMultiple ? 'users' : 'user') => $users,
             'error' => null,
         ];
-
     }
-
-
-
 
     public function showUsers() {
         $users = $this->userModel->getAll();

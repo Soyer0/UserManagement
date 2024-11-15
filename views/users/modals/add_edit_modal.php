@@ -22,9 +22,10 @@
                     <div class="form-group mb-3">
                         <label for="statusSwitch" class="form-label">Status</label>
                         <div class="form-check form-switch form-switch-lg">
-                            <input class="form-check-input" type="checkbox" id="statusSwitch">
+                            <input class="form-check-input" type="checkbox" id="statusSwitch" name="statusSwitch">
                             <label class="form-check-label" for="statusSwitch"></label>
                         </div>
+                        <input type="hidden" id="status" name="status" value="0">
                     </div>
                     <div class="form-group mb-3">
                         <label for="role_id" class="form-label">Role</label>
