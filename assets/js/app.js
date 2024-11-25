@@ -24,29 +24,56 @@ $(document).ready(function() {
     function showModal(modalId, message = '') {
         const $modal = $(`#${modalId}`);
         if (message) $modal.find('.modal-body').html(message);
-        if (modalId === 'userModal') resetUserForm();
         $modal.modal('show');
     }
 
-    function resetUserForm() {
-        $('#userForm')[0].reset();
-        $('#userId').val('');
-        $('#userModalLabel').text('Add User');
-        $('#submitBtn').text('Save');
-        $('#statusSwitch').prop('checked', false);
-        $('#role_id').val(0);
-        $('#role_id option[value=0]').show();
+    async function showUserModal(action, userData = null) {
+        const isEdit = action === 'edit';
+
+        const modalParams = {
+            title: 'Add User',
+            submitText: 'Save',
+            id: '',
+            firstName: '',
+            lastName: '',
+            status: false,
+            roleId: 0,
+            roleHideOption: false
+        };
+
+        if (isEdit && userData) {
+            modalParams.title = 'Edit User';
+            modalParams.submitText = 'Update';
+            modalParams.id = userData.id || '';
+            modalParams.firstName = userData.name_first || '';
+            modalParams.lastName = userData.name_last || '';
+            modalParams.status = userData.status === 1;
+            modalParams.roleId = userData.role_id || 0;
+            modalParams.roleHideOption = true;
+        }
+
+        $('#userId').val(modalParams.id);
+        $('#userModalLabel').text(modalParams.title);
+        $('#submitBtn').text(modalParams.submitText);
+        $('#firstName').val(modalParams.firstName);
+        $('#lastName').val(modalParams.lastName);
+        $('#statusSwitch').prop('checked', modalParams.status);
+        $('#role_id').val(modalParams.roleId);
+
+        if (modalParams.roleHideOption) {
+            $('#role_id option[value=0]').hide();
+        } else {
+            $('#role_id option[value=0]').show();
+        }
+
         $('#userModalError').hide().text('');
+        $('#firstNameError, #lastNameError, #roleError').addClass('d-none');
+
+        $('#userModal').modal('show');
     }
 
     function resetCheckboxes() {
         $('.userCheckbox, #selectAll').prop('checked', false);
-    }
-
-    function closeUserModal() {
-        $('#userModal').modal('hide');
-        $('#userForm')[0].reset();
-        $('#firstNameError, #lastNameError, #roleError').hide();
     }
 
     // API Handlers
@@ -72,8 +99,7 @@ $(document).ready(function() {
     // User Modal Functions
     class UserModalHandler {
         static async handleAddUser() {
-            resetUserForm();
-            await showModal('userModal');
+            await showUserModal('add');
         }
 
         static async handleEditUser(userId) {
@@ -84,25 +110,12 @@ $(document).ready(function() {
                     throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
                 }
 
-                await showModal('userModal');
-                UserModalHandler.populateEditForm(result.user);
+                await showUserModal('edit', result.user);
 
             } catch (error) {
                 await showModal('customErrorModal', ERROR_MESSAGES.USER_NOT_FOUND);
                 return false;
             }
-        }
-
-        static populateEditForm(user) {
-            $('#userId').val(user.id);
-            $('#userModalLabel').text('Edit User');
-            $('#submitBtn').text('Update');
-            $('#firstName').val(user.name_first);
-            $('#lastName').val(user.name_last);
-            $('#statusSwitch').prop('checked', user.status_name === 'active');
-            $('#role_id').val(user.role_id);
-            $('#role_id option[value=0]').hide();
-            $('#userModalError').hide().text('');
         }
 
     }
@@ -165,9 +178,9 @@ $(document).ready(function() {
             Object.keys(errors).forEach(field => {
                 const $errorElement = $(`#${field}Error`);
                 if (errors[field]) {
-                    $errorElement.removeClass('error-message');
+                    $errorElement.removeClass('d-none');
                 } else {
-                    $errorElement.addClass('error-message');
+                    $errorElement.addClass('d-none');
                 }
             });
 
@@ -177,7 +190,7 @@ $(document).ready(function() {
         static async handleAddSubmit(formData) {
             try {
                 const result = await handleApiRequest(API_ENDPOINTS.ADD_USER, 'POST', formData);
-                closeUserModal();
+                $('#userModal').modal('hide');
                 $('#userTableBody').append(generateUserRowHtml(result.user));
                 return true;
 
@@ -190,7 +203,7 @@ $(document).ready(function() {
         static async handleEditSubmit(userId, formData) {
             try {
                 const result = await handleApiRequest(API_ENDPOINTS.EDIT_USER, 'POST', formData);
-                closeUserModal();
+                $('#userModal').modal('hide');
                 $(`tr[data-id="${userId}"]`).replaceWith(generateUserRowHtml(result.user));
                 return true;
 

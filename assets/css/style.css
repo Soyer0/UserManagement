@@ -6,14 +6,11 @@
     border-radius: 50%;
     margin-right: 5px;
     vertical-align: middle;
+    background-color: #6c757d;
 }
 
 .status-circle.active {
     background-color: #28a745;
-}
-
-.status-circle.not-active {
-    background-color: #6c757d;
 }
 
 tbody tr:hover {
@@ -29,20 +26,33 @@ thead th {
     text-align: center;
 }
 
-.form-check-input {
-    clear: left;
+/* Existing styles... */
+
+/* Custom styles for larger switch */
+.form-switch .form-check-input {
+    width: 3rem;
+    height: 1.5rem;
+    margin-left: -3.25rem;
 }
 
-.form-switch.form-switch-lg {
-    margin-bottom: 1.5rem; /* JUST FOR STYLING PURPOSE */
+.form-switch .form-check-input:checked {
+    background-position: right center;
 }
 
-.form-switch.form-switch-lg .form-check-input {
-    height: 2rem;
-    width: calc(3rem + 0.75rem);
-    border-radius: 4rem;
+.form-switch .form-check-label {
+    padding-left: 0.5rem;
 }
 
-.error-message {
+/* Adjust the position of the switch */
+.form-switch {
+    padding-left: 3.5rem;
+}
+
+/* Optional: Increase the size of the label text */
+.form-switch .form-check-label {
+    font-size: 1.1rem;
+}
+
+.d-none {
     display: none;
 }

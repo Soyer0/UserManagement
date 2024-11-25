@@ -4,48 +4,48 @@ require_once __DIR__ .'/../models/UserModel.php';
 class UserController {
     private $userModel;
     private $roles = [1 => 'Admin', 2 => 'User'];
-    private $status = [0 => 'not-active', 1 => 'active'];
     public function __construct() {
         $this->userModel = new UserModel();
     }
 
     private function getUserInputData() {
-        $userId = $_POST['userId'] ?? null;
-        $name_first = trim($_POST['firstName'] ?? '');
-        $name_last = trim($_POST['lastName'] ?? '');
-        $status = $_POST['status'] ?? null;
-        $role_id = $_POST['role_id'] ?? null;
-
         return [
-            'id' => $userId,
-            'name_first' => $name_first,
-            'name_last' => $name_last,
-            'status' => $status,
-            'role_id' => $role_id,
+            'id' => (int)($_POST['userId'] ?? 0),
+            'name_first' => trim($_POST['firstName'] ?? ''),
+            'name_last' => trim($_POST['lastName'] ?? ''),
+            'status' => $_POST['status'] ?? 0,
+            'role_id' => (int)($_POST['role_id'] ?? 0),
         ];
+    }
+
+    private function validateUserData($data) {
+        $errors = [];
+
+        if (empty($data['name_first'])) {
+            $errors['firstName'] = 'First name is required.';
+        }
+
+        if (empty($data['name_last'])) {
+            $errors['lastName'] = 'Last name is required.';
+        }
+
+        if (!in_array($data['role_id'], array_keys($this->roles))) {
+            $errors['role_id'] = 'Invalid role selected.';
+        }
+
+        return $errors;
     }
 
     private function prepareUserResponse($data)
     {
-        $isMultiple = isset($data[0]) && is_array($data[0]);
-
-        if ($isMultiple) {
-            $users = array_map(function ($user) {
-                $user['role_name'] = $this->roles[$user['role_id']] ?? 'Unknown';
-                $user['status_name'] = $this->status[$user['status']] ?? 'Unknown';
-                return $user;
-            }, $data);
-        } else {
-            $data['role_name'] = $this->roles[$data['role_id']] ?? 'Unknown';
-            $data['status_name'] = $this->status[$data['status']] ?? 'Unknown';
-            $users = $data;
-        }
+        $key = isset($data[0]) && is_array($data[0]) ? 'users' : 'user';
         return [
             'success' => true,
-            ($isMultiple ? 'users' : 'user') => $users,
+            $key => $data,
             'error' => null,
         ];
     }
+
 
     public function showUsers() {
         $users = $this->userModel->getAll();
@@ -53,7 +53,6 @@ class UserController {
         $content = $this->render('users/index', [
             'users' => $users,
             'roles' => $this->roles,
-            'status' => $this->status,
         ]);
 
         echo $this->render('layout', ['content' => $content]);
@@ -66,8 +65,10 @@ class UserController {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $this->getUserInputData();
 
-                if ($data['name_first'] === '' || $data['name_last'] === '' || $data['status'] === null || $data['role_id'] === null) {
-                    throw new Exception("Invalid input data");
+                $errors = $this->validateUserData($data);
+
+                if (!empty($errors)) {
+                    throw new Exception(json_encode($errors));
                 }
 
                 $id = $this->userModel->add($data['name_first'], $data['name_last'], $data['status'], $data['role_id']);
@@ -100,8 +101,10 @@ class UserController {
         }
 
         try {
-            if ($data['name_first'] === '' || $data['name_last'] === '' || $data['status'] === null || $data['role_id'] === null) {
-                throw new Exception("Invalid input data");
+            $errors = $this->validateUserData($data);
+
+            if (!empty($errors)) {
+                throw new Exception(json_encode($errors));
             }
 
             $updated = $this->userModel->update($data['id'], $data['name_first'], $data['name_last'], $data['status'], $data['role_id']);

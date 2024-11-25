@@ -8,4 +8,26 @@ class Model {
             die("Connection failed: " . $this->db->connect_error);
         }
     }
+
+    protected function executeQuery($sql, $params = [], $types = '') {
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Query preparation failed: " . $this->db->error);
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Query execution failed: " . $stmt->error);
+        }
+
+        return $stmt;
+    }
+
+    protected function fetchAll($stmt) {
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

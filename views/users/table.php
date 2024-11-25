@@ -20,7 +20,7 @@
             </td>
             <td><?= htmlspecialchars($user['name_first'] . ' ' . $user['name_last']) ?></td>
             <td class="status">
-                <span class="status-circle <?= $status[$user['status']] ?>"></span>
+                <span class="status-circle <?= $user['status'] == 1 ? 'active' : '' ?>"></span>
             </td>
             <td><?= $roles[$user['role_id']] ?></td>
             <td>

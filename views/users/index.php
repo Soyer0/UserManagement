@@ -9,5 +9,6 @@
 <?php include __DIR__ . '/modals/delete_confirm_modal.php'; ?>
 <?php include __DIR__ . '/modals/error_modal.php'; ?>
 <?php include __DIR__ . '/modals/warning_modal.php'; ?>
-
-
+<script>
+    window.rolesMap = <?php echo json_encode($roles); ?>;
+</script>
