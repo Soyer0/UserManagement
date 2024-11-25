@@ -6,14 +6,11 @@
     border-radius: 50%;
     margin-right: 5px;
     vertical-align: middle;
+    background-color: #6c757d; /* Серый цвет по умолчанию */
 }
 
 .status-circle.active {
-    background-color: #28a745;
-}
-
-.status-circle.not-active {
-    background-color: #6c757d;
+    background-color: #28a745; /* Зеленый цвет для активного состояния */
 }
 
 tbody tr:hover {

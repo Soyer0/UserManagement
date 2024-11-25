@@ -3,7 +3,7 @@ window.generateUserRowHtml = function (user) {
         <tr data-id="${user.id}">
             <td><input type="checkbox" class="userCheckbox" value="${user.id}"></td>
             <td>${htmlspecials(user.name_first + ' ' + user.name_last)}</td>
-            <td class="status"><span class="status-circle ${user.status_name}"></span></td>
+            <td class="status"><span class="status-circle ${user.status == 1 ? 'active' : ''}"></span></td>
             <td>${user.role_name}</td>
             <td>
                 <button class="btn btn-warning btn-sm editUserBtn" id="editUserBtn" data-id="${user.id}">

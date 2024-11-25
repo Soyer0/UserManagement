@@ -99,7 +99,7 @@ $(document).ready(function() {
             $('#submitBtn').text('Update');
             $('#firstName').val(user.name_first);
             $('#lastName').val(user.name_last);
-            $('#statusSwitch').prop('checked', user.status_name === 'active');
+            $('#statusSwitch').prop('checked', user.status == 1);
             $('#role_id').val(user.role_id);
             $('#role_id option[value=0]').hide();
             $('#userModalError').hide().text('');

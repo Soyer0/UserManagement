@@ -3,8 +3,8 @@ require_once 'Model.php';
 
 class UserModel extends Model {
     public function getAll() {
-        $result = $this->db->query("SELECT * FROM users");
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->executeQuery("SELECT * FROM users");
+        return $this->fetchAll($stmt);
     }
 
     public function getById($ids) {
@@ -13,49 +13,42 @@ class UserModel extends Model {
         }
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id IN ($placeholders)");
         $types = str_repeat('i', count($ids));
-        $stmt->bind_param($types, ...$ids);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $stmt = $this->executeQuery("SELECT * FROM users WHERE id IN ($placeholders)", $ids, $types);
+        return $this->fetchAll($stmt);
     }
 
     public function add($name_first, $name_last, $status, $role_id) {
-        $stmt = $this->db->prepare("INSERT INTO users (name_first, name_last, status, role_id) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssii", $name_first, $name_last, $status, $role_id);
-        if ($stmt->execute()) {
-            return $this->db->insert_id;
-        } else {
-            return false;
-        }
+        $stmt = $this->executeQuery(
+            "INSERT INTO users (name_first, name_last, status, role_id) VALUES (?, ?, ?, ?)",
+            [$name_first, $name_last, $status, $role_id],
+            "ssii"
+        );
+        return $this->db->insert_id;
     }
 
     public function update($id, $name_first, $name_last, $status, $role_id) {
-        $stmt = $this->db->prepare("UPDATE users SET name_first = ?, name_last = ?, status = ?, role_id = ? WHERE id = ?");
-        $stmt->bind_param("ssiii", $name_first, $name_last, $status, $role_id, $id);
-        return $stmt->execute();
+        $stmt = $this->executeQuery(
+            "UPDATE users SET name_first = ?, name_last = ?, status = ?, role_id = ? WHERE id = ?",
+            [$name_first, $name_last, $status, $role_id, $id],
+            "ssiii"
+        );
+        return $stmt->affected_rows > 0;
     }
 
     public function delete(array $ids) {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $types = str_repeat('i', count($ids));
-
-        $stmt = $this->db->prepare("DELETE FROM users WHERE id IN ($placeholders)");
-        $stmt->bind_param($types, ...$ids);
-
-        return $stmt->execute();
+        $stmt = $this->executeQuery("DELETE FROM users WHERE id IN ($placeholders)", $ids, $types);
+        return $stmt->affected_rows > 0;
     }
 
-    public function setStatus(array $id, $status) {
-        $placeholders = implode(',', array_fill(0, count($id), '?'));
-        $types = 'i' . str_repeat('i', count($id));
-
-        $stmt = $this->db->prepare("UPDATE users SET status = ? WHERE id IN ($placeholders)");
-        $stmt->bind_param($types, $status,...$id);
-
-        return $stmt->execute();
+    public function setStatus(array $ids, $status) {
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $types = 'i' . str_repeat('i', count($ids));
+        $params = array_merge([$status], $ids);
+        $stmt = $this->executeQuery("UPDATE users SET status = ? WHERE id IN ($placeholders)", $params, $types);
+        return $stmt->affected_rows > 0;
     }
 
 }
