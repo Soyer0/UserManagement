@@ -7,6 +7,17 @@ class UserModel extends Model {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getColumns()
+    {
+        $columnsResult = $this->db->query("SHOW COLUMNS FROM users")->fetch_all(MYSQLI_ASSOC);
+        $columnNames = array_column($columnsResult, 'Field');
+        $filteredColumns = array_filter($columnNames, function ($col) {
+            return $col !== 'id';
+        });
+
+        return array_values($filteredColumns);
+    }
+
     public function getById($ids) {
         if (!is_array($ids)) {
             $ids = [$ids];

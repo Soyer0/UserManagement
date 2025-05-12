@@ -1,4 +1,4 @@
-<div class="modal fade" id="customErrorModal" tabindex="-1" role="dialog" aria-labelledby="customErrorModalLabel" aria-hidden="true">
+<div class="modal fade" id="customErrorModal" tabindex="-1" role="dialog" aria-labelledby="customErrorModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">

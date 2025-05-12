@@ -2,7 +2,6 @@
     <h2>User Management</h2>
     <?php include __DIR__ . '/action_buttons.php'; ?>
     <?php include __DIR__ . '/table.php'; ?>
-    <?php include __DIR__ . '/action_buttons.php'; ?>
 </div>
 
 <?php include __DIR__ . '/modals/add_edit_modal.php'; ?>

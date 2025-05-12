@@ -1,3 +1,8 @@
+<div class="mb-3">
+    <label for="userSearchInput"><input type="text" id="userSearchInput" class="form-control" placeholder="Search users by name...">
+    </label>
+</div>
+
 <table class="table table-bordered">
     <thead>
     <tr>
@@ -6,9 +11,9 @@
                 <input type="checkbox" id="selectAll">
             </label>
         </th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Role</th>
+        <?php foreach ($columns as $label): ?>
+            <th><?= htmlspecialchars($label) ?></th>
+        <?php endforeach; ?>
         <th>Options</th>
     </tr>
     </thead>
@@ -18,7 +23,8 @@
             <td>
                 <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
             </td>
-            <td><?= htmlspecialchars($user['name_first'] . ' ' . $user['name_last']) ?></td>
+            <td><?= htmlspecialchars($user['name_first']) ?></td>
+            <td><?= htmlspecialchars($user['name_last']) ?></td>
             <td class="status">
                 <span class="status-circle <?= $status[$user['status']] ?>"></span>
             </td>
@@ -35,3 +41,7 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+    window.userColumns = <?= json_encode($columns) ?>;
+</script>

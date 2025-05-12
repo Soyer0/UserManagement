@@ -1,4 +1,4 @@
-<div class="modal fade" id="customWarningModal" tabindex="-1" role="dialog" aria-labelledby="customWarningModalLabel" aria-hidden="true">
+<div class="modal fade" id="customWarningModal" tabindex="-1" role="dialog" aria-labelledby="customWarningModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

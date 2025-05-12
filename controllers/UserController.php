@@ -11,8 +11,8 @@ class UserController {
 
     private function getUserInputData() {
         $userId = $_POST['userId'] ?? null;
-        $name_first = trim($_POST['firstName'] ?? '');
-        $name_last = trim($_POST['lastName'] ?? '');
+        $name_first = trim($_POST['name_first'] ?? '');
+        $name_last = trim($_POST['name_last'] ?? '');
         $status = $_POST['status'] ?? null;
         $role_id = $_POST['role_id'] ?? null;
 
@@ -49,9 +49,11 @@ class UserController {
 
     public function showUsers() {
         $users = $this->userModel->getAll();
+        $columns = $this->userModel->getColumns();
 
         $content = $this->render('users/index', [
             'users' => $users,
+            'columns' => $columns,
             'roles' => $this->roles,
             'status' => $this->status,
         ]);

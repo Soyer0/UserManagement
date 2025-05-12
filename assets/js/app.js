@@ -20,11 +20,55 @@ $(document).ready(function() {
         GENERAL_ERROR: 'An error occurred while processing your request.'
     };
 
+    function generateDynamicFields() {
+        const container = $('#dynamicFieldsContainer');
+        container.empty();
+        userColumns.forEach(column => {
+            switch (column) {
+                case 'status':
+                    container.append(`
+                        <div class="form-group mb-3">
+                            <label for="statusSwitch" class="form-label">Status</label>
+                            <div class="form-check form-switch form-switch-lg">
+                                <input class="form-check-input" type="checkbox" id="statusSwitch" name="statusSwitch">
+                                <label class="form-check-label" for="statusSwitch"></label>
+                            </div>
+                        </div>
+                    `);
+                    break;
+                case 'role_id':
+                    container.append(`
+                        <div class="form-group mb-3">
+                            <label for="role_id" class="form-label">Role</label>
+                            <select class="form-select" id="role_id" name="role_id">
+                                <option value="0">-Please select-</option>
+                                <option value="1">Admin</option>
+                                <option value="2">User</option>
+                            </select>
+                            <small class="form-text text-danger error-message" id="roleError">Please choose a role from the list.</small>
+                        </div>
+                    `);
+                    break;
+                default:
+                    container.append(`
+                        <div class="form-group mb-3">
+                            <label for="${column}" class="form-label">${column.charAt(0).toUpperCase() + column.slice(1)}</label>
+                            <input type="text" class="form-control" id="${column}" name="${column}">
+                        </div>
+                    `);
+                    break;
+            }
+        });
+    }
+
     // Modal handling functions
     function showModal(modalId, message = '') {
         const $modal = $(`#${modalId}`);
         if (message) $modal.find('.modal-body').html(message);
-        if (modalId === 'userModal') resetUserForm();
+        if (modalId === 'userModal') {
+            resetUserForm();
+            generateDynamicFields();
+        }
         $modal.modal('show');
     }
 
@@ -37,6 +81,8 @@ $(document).ready(function() {
         $('#role_id').val(0);
         $('#role_id option[value=0]').show();
         $('#userModalError').hide().text('');
+
+
     }
 
     function resetCheckboxes() {
@@ -97,8 +143,8 @@ $(document).ready(function() {
             $('#userId').val(user.id);
             $('#userModalLabel').text('Edit User');
             $('#submitBtn').text('Update');
-            $('#firstName').val(user.name_first);
-            $('#lastName').val(user.name_last);
+            $('#name_first').val(user.name_first);
+            $('#name_last').val(user.name_last);
             $('#statusSwitch').prop('checked', user.status_name === 'active');
             $('#role_id').val(user.role_id);
             $('#role_id option[value=0]').hide();
@@ -157,8 +203,8 @@ $(document).ready(function() {
     class UserFormHandler {
         static validateForm() {
             const errors = {
-                firstName: !$('#firstName').val().trim(),
-                lastName: !$('#lastName').val().trim(),
+                firstName: !$('#name_first').val().trim(),
+                lastName: !$('#name_last').val().trim(),
                 role: $('#role_id').val() === "0"
             };
 
@@ -218,7 +264,9 @@ $(document).ready(function() {
         e.stopPropagation();
         const $row = $(this).closest('tr');
         const userId = $row.data('id');
-        const userName = $row.find('td:nth-child(2)').text();
+        const nameFirst = $row.find('td:nth-child(2)').text();
+        const nameLast = $row.find('td:nth-child(3)').text();
+        const userName = `${nameFirst} ${nameLast}`;
 
         const $userList = $('#userListToDelete').empty();
         $userList.append(`<li>${userName}</li>`);
@@ -245,7 +293,7 @@ $(document).ready(function() {
         const userId = $('#userId').val();
         const formData = $(this).serialize() +
             `&status=${$('#statusSwitch').is(':checked') ? 1 : 0}`;
-
+        console.log(formData);
         if (userId) {
             UserFormHandler.handleEditSubmit(userId, formData);
         } else {
@@ -262,7 +310,7 @@ $(document).ready(function() {
             const $row = $(this).closest('tr');
             return {
                 id: $row.data('id'),
-                name: $row.find('td:nth-child(2)').text()
+                name: $row.find('td:nth-child(2)').text() + ' ' + $row.find('td:nth-child(3)').text()
             };
         }).get();
 
@@ -276,6 +324,7 @@ $(document).ready(function() {
 
         if (action === ACTIONS.DELETE) {
             const $userList = $('#userListToDelete').empty();
+            console.log(users);
             users.forEach(user => $userList.append(`<li>${user.name}</li>`));
 
             $('#confirmDeleteBtn')
@@ -308,4 +357,18 @@ $(document).ready(function() {
         const allChecked = $('.userCheckbox:checked').length === $('.userCheckbox').length;
         $('#selectAll').prop('checked', allChecked);
     });
+
+    $('#userSearchInput').on('input', function () {
+        const searchValue = $(this).val().toLowerCase().trim();
+
+        $('#userTableBody tr').each(function () {
+            const nameFirst = $(this).find('td:nth-child(2)').text().toLowerCase();
+            const nameLast = $(this).find('td:nth-child(3)').text().toLowerCase();
+
+            const isVisible = nameFirst.includes(searchValue) || nameLast.includes(searchValue);
+
+            $(this).toggle(isVisible);
+        });
+    });
+
 });
