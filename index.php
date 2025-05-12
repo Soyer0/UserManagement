@@ -29,6 +29,9 @@ switch ($action) {
     case 'setStatus':
         $controller->setStatus();
         break;
+    case 'searchUsers':
+        $controller->searchUsers();
+        break;
     default:
         echo "404 Not Found";
         break;

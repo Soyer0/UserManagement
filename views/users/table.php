@@ -1,6 +1,11 @@
-<div class="mb-3">
-    <label for="userSearchInput"><input type="text" id="userSearchInput" class="form-control" placeholder="Search users by name...">
-    </label>
+<div class="mb-3 d-flex align-items-center col-3">
+    <label for="userSearchInput" class="mb-0 me-2"></label>
+    <div class="input-group">
+        <input type="text" id="userSearchInput" class="form-control" placeholder="Search users by name...">
+        <button class="btn btn-outline-secondary" id="searchBtn" type="button">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
 </div>
 
 <table class="table table-bordered">

@@ -153,11 +153,12 @@ class UserController {
 
     public function setStatus() {
         header('Content-Type: application/json');
+
         $ids = $_POST['userIds'] ?? [];
         $status = $_POST['status'] ?? null;
 
-        if ($ids <= 0 || $status === null) {
-            echo json_encode(['success' => false, 'error' => 'Invalid user ID or status']);
+        if (!is_array($ids) || empty($ids) || $status === null) {
+            echo json_encode(['success' => false, 'error' => 'Invalid user IDs or status']);
             exit;
         }
 
@@ -165,23 +166,22 @@ class UserController {
             $this->userModel->setStatus($ids, $status);
             $updatedUsers = $this->userModel->getById($ids);
 
-            if (!$updatedUsers) {
-                throw new Exception("Failed to update user status");
-            }
-
-            if(count($updatedUsers) !== count($ids)) {
+            if (!$updatedUsers || count($updatedUsers) !== count($ids)) {
                 throw new Exception("Failed to retrieve updated users");
             }
 
             $response = $this->prepareUserResponse($updatedUsers);
             echo json_encode($response);
+            exit;
         } catch (Exception $e) {
             echo json_encode([
-               'success' => false,
+                'success' => false,
                 'error' => $e->getMessage(),
             ]);
+            exit;
         }
     }
+
 
     public function getUser() {
         header('Content-Type: application/json');
@@ -204,6 +204,44 @@ class UserController {
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
+        exit;
+    }
+
+    public function searchUsers()
+    {
+        header('Content-Type: application/json');
+        $search = $_GET['search'] ?? '';
+        if (trim($search) === '') {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Empty search string'
+            ]);
+            exit;
+        }
+
+        try {
+            $users = $this->userModel->searchByName($search);
+            foreach ($users as &$user) {
+                $user['role_name'] = $this->roles[$user['role_id']] ?? 'Unknown';
+                $user['status_name'] = $this->status[$user['status']] ?? 'Unknown';
+            }
+
+            if (empty($users)) {
+                throw new Exception('No users found.');
+            }
+
+            echo json_encode([
+                'success' => true,
+                'users' => $users,
+                'error' => null,
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+
         exit;
     }
 

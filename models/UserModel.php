@@ -69,4 +69,20 @@ class UserModel extends Model {
         return $stmt->execute();
     }
 
+    public function searchByName($search) {
+
+        $search = '%' . $this->db->real_escape_string($search) . '%';
+
+        $stmt = $this->db->prepare("
+        SELECT * FROM users
+        WHERE name_first LIKE ? OR name_last LIKE ?
+    ");
+        $stmt->bind_param("ss", $search, $search);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+
 }

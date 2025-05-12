@@ -11,7 +11,8 @@ $(document).ready(function() {
         ADD_USER: 'index.php?action=addUser',
         EDIT_USER: 'index.php?action=editUser',
         DELETE_USERS: 'index.php?action=deleteUsers',
-        SET_STATUS: 'index.php?action=setStatus'
+        SET_STATUS: 'index.php?action=setStatus',
+        SEARCH_USERS: 'index.php?action=searchUsers',
     };
 
     const ERROR_MESSAGES = {
@@ -104,13 +105,14 @@ $(document).ready(function() {
                 data: data,
                 dataType: 'json'
             });
-            if (!response || response.error !== null || !response.success) {
+            if (!response || response.error || !response.success) {
                 throw new Error(response?.error || ERROR_MESSAGES.GENERAL_ERROR);
             }
 
             return response;
         } catch (error) {
-            throw new Error(error.responseJSON?.error || ERROR_MESSAGES.GENERAL_ERROR);
+            const errorMessage = error.responseJSON?.error || error.message || ERROR_MESSAGES.GENERAL_ERROR;
+            throw new Error(errorMessage);
         }
     }
 
@@ -297,7 +299,6 @@ $(document).ready(function() {
         const userId = $('#userId').val();
         const formData = $(this).serialize() +
             `&status=${$('#statusSwitch').is(':checked') ? 1 : 0}`;
-        console.log(formData);
         if (userId) {
             UserFormHandler.handleEditSubmit(userId, formData);
         } else {
@@ -328,7 +329,6 @@ $(document).ready(function() {
 
         if (action === ACTIONS.DELETE) {
             const $userList = $('#userListToDelete').empty();
-            console.log(users);
             users.forEach(user => $userList.append(`<li>${user.name}</li>`));
 
             $('#confirmDeleteBtn')
@@ -362,21 +362,33 @@ $(document).ready(function() {
         $('#selectAll').prop('checked', allChecked);
     });
 
-    $('#userSearchInput').on('input', function () {
-        const searchValue = $(this).val().toLowerCase().trim();
-
-        $('#userTableBody tr').each(function () {
-            const nameFirst = $(this).find('td:nth-child(2)').text().toLowerCase();
-            const nameLast = $(this).find('td:nth-child(3)').text().toLowerCase();
-
-            const isVisible = nameFirst.includes(searchValue) || nameLast.includes(searchValue);
-
-            $(this).toggle(isVisible);
-        });
-    });
-
     function resetSearchFilter() {
         $('#userSearchInput').val('');
         $('#userTableBody tr').show();
     }
+
+
+    $('#searchBtn').on('click', async function() {
+        const searchValue = $('#userSearchInput').val().trim();
+
+        if (searchValue.length > 0) {
+            try {
+                const response = await handleApiRequest(API_ENDPOINTS.SEARCH_USERS, 'GET', { search: searchValue });
+                if (response.success) {
+                    const userTableBody = $('#userTableBody');
+                    userTableBody.empty();
+                    response.users.forEach(user => {
+                        userTableBody.append(generateUserRowHtml(user));
+                    });
+                } else {
+                    showModal('customWarningModal', 'No users found');
+                }
+            } catch (error) {
+                showModal('customErrorModal', error.message || 'An error occurred while searching.');
+            }
+        } else {
+            showModal('customWarningModal', 'Please enter a user name in search.');
+        }
+    });
+
 });
