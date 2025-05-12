@@ -169,6 +169,7 @@ $(document).ready(function() {
                     $(`tr[data-id="${userId}"]`).remove();
                 });
                 resetCheckboxes();
+                resetSearchFilter();
                 return true;
             } catch (error) {
                 showModal('customErrorModal', ERROR_MESSAGES.GENERAL_ERROR);
@@ -190,6 +191,7 @@ $(document).ready(function() {
                     $(`tr[data-id="${user.id}"]`).replaceWith(generateUserRowHtml(user));
                 });
 
+                resetSearchFilter();
                 resetCheckboxes();
                 return true;
             } catch (error) {
@@ -225,6 +227,7 @@ $(document).ready(function() {
                 const result = await handleApiRequest(API_ENDPOINTS.ADD_USER, 'POST', formData);
                 closeUserModal();
                 $('#userTableBody').append(generateUserRowHtml(result.user));
+                resetSearchFilter();
                 return true;
 
             } catch (error) {
@@ -238,6 +241,7 @@ $(document).ready(function() {
                 const result = await handleApiRequest(API_ENDPOINTS.EDIT_USER, 'POST', formData);
                 closeUserModal();
                 $(`tr[data-id="${userId}"]`).replaceWith(generateUserRowHtml(result.user));
+                resetSearchFilter();
                 return true;
 
             } catch (error) {
@@ -371,4 +375,8 @@ $(document).ready(function() {
         });
     });
 
+    function resetSearchFilter() {
+        $('#userSearchInput').val('');
+        $('#userTableBody tr').show();
+    }
 });

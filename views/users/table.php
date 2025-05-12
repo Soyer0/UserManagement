@@ -23,12 +23,22 @@
             <td>
                 <input type="checkbox" class="userCheckbox" value="<?= $user['id'] ?>">
             </td>
-            <td><?= htmlspecialchars($user['name_first']) ?></td>
-            <td><?= htmlspecialchars($user['name_last']) ?></td>
-            <td class="status">
-                <span class="status-circle <?= $status[$user['status']] ?>"></span>
-            </td>
-            <td><?= $roles[$user['role_id']] ?></td>
+
+            <?php foreach ($columns as $column): ?>
+                <td class="<?= $column ?>">
+                    <?php
+                    $value = $user[$column] ?? null;
+                    if ($column === 'status') {
+                        echo '<span class="status-circle ' . ($status[$value]) . '"></span>';
+                    } elseif ($column === 'role_id') {
+                        echo $roles[$value] ?? '-';
+                    } else {
+                        echo $value !== null && trim($value) !== '' ? htmlspecialchars($value) : '-';
+                    }
+                    ?>
+                </td>
+            <?php endforeach; ?>
+
             <td>
                 <button class="btn btn-warning btn-sm editUserBtn" data-id="<?= $user['id'] ?>">
                     <i class="bi bi-pencil"></i>
@@ -40,6 +50,7 @@
         </tr>
     <?php endforeach; ?>
     </tbody>
+
 </table>
 
 <script>
